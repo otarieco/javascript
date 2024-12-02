@@ -80,13 +80,13 @@ export class EmailAddress extends BaseResource implements EmailAddressResource {
     return { startEmailLinkFlow, cancelEmailLinkFlow: stop };
   };
 
-  createEnterpriseConnectionLinkFlow = (): CreateEnterpriseConnectionLinkFlowReturn<
+  createEnterpriseSsoLinkFlow = (): CreateEnterpriseConnectionLinkFlowReturn<
     StartEnterpriseConnectionLinkFlowParams,
     EmailAddressResource
   > => {
     const { run, stop } = Poller();
 
-    const startEnterpriseConnectionLinkFlow = async ({
+    const startEnterpriseSsoLinkFlow = async ({
       redirectUrl,
     }: StartEnterpriseConnectionLinkFlowParams): Promise<EmailAddressResource> => {
       if (!this.id) {
@@ -94,7 +94,7 @@ export class EmailAddress extends BaseResource implements EmailAddressResource {
       }
       const response = await this.prepareVerification({
         strategy: 'enterprise_sso',
-        redirectUrl: redirectUrl,
+        redirectUrl,
       });
       if (!response.verification.externalVerificationRedirectURL) {
         throw Error('Unexpected: External verification redirect URL is missing');
@@ -116,7 +116,7 @@ export class EmailAddress extends BaseResource implements EmailAddressResource {
         });
       });
     };
-    return { startEnterpriseConnectionLinkFlow, cancelEnterpriseConnectionLinkFlow: stop };
+    return { startEnterpriseSsoLinkFlow, cancelEnterpriseSsoLinkFlow: stop };
   };
 
   destroy = (): Promise<void> => this._baseDelete();
